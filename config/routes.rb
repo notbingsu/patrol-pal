@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   root 'home#index'
   get 'home/index'
   get 'patrol', to: 'patrol#panel'
+  get 'optimise', to: 'patrol#optimise'
   get 'reports', to: 'reports#index'
   get 'api_key', to: 'api_controller#api_key'
   get 'generate_route', to: 'reports#generate_route'

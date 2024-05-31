@@ -13,5 +13,6 @@ class PatrolController < ApplicationController
       )
     end
     @locations = Location.all
-    end
-  end
+
+end
+end
