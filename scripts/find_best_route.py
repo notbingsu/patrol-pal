@@ -3,10 +3,12 @@ Based on selected hotspots, finds the best route to travel all hotspots in the m
 Travelling time is retrieved from Google Maps API.
 """
 from google.maps import routeoptimization_v1 as ro
+import json
 
-def optimize_route(police_station, hotspots):
+def optimize_route(police_station, hotspots, start_time, end_time):
     """
-    Draws a route that is optimized "well enough" that includes a police station and all hotspots
+    Draws a route that is optimized "well enough" that includes a police station and all hotspots.
+    Writes the output to out/output.json
 
     Parameters
     ---
@@ -22,21 +24,28 @@ def optimize_route(police_station, hotspots):
     
     Returns
     ---
-    visits : list[Visit]
+    An object containing the following values:
+    visits : list[{
+        latitude : float
+        longitude : float
+        detour_seconds : int
+        start_time_seconds : int
+    }]
         Represents a list of visits to each hotspot.
         For instance, visits[i] corresponds to the i-th hotspot visited.
         This list excludes the start and end point.
-        For what the Visit object contains, see: 
-            https://developers.google.com/maps/documentation/route-optimization/reference/rest/v1/ShipmentRoute#visit
-    transitions : list[Transition]
+        Attributes are derived from the Visit object [https://developers.google.com/maps/documentation/route-optimization/reference/rest/v1/ShipmentRoute#visit]
+    transitions : list[{
+        travel_duration_seconds : int
+        travel_distance_meters : float
+    }]
         Represents the transitions between each location on the route.
         For instance, visits and transitions can be visualised this way:
             (start) -> transitions[0] -> visits[0] -> transitions[1] -> ... -> transitions[n] -> visits[n] -> transitions[n+1] -> (end)
-        For what the Transition object contains, see:
-            https://developers.google.com/maps/documentation/route-optimization/reference/rest/v1/ShipmentRoute#transition 
-    polyline : EncodedPolyline
-        Contains the encoded polyline of the route.
-        https://developers.google.com/maps/documentation/route-optimization/reference/rest/v1/ShipmentRoute#encodedpolyline 
+        Attributes are derived from the Transition object [https://developers.google.com/maps/documentation/route-optimization/reference/rest/v1/ShipmentRoute#transition]
+    encoded_polyline : str
+        Contains the string representing encoded points for the polyline of the route.
+        [https://developers.google.com/maps/documentation/route-optimization/reference/rest/v1/ShipmentRoute#encodedpolyline]
 
     Raises
     ---
@@ -74,8 +83,8 @@ def optimize_route(police_station, hotspots):
             "cost_per_kilometer": 1.0
             }
         ],
-        "global_start_time": "2024-05-30T00:00:00.000Z",
-        "global_end_time": "2024-05-31T06:00:00.000Z"
+        "global_start_time": start_time,
+        "global_end_time": end_time
         },
         populate_polylines=True
     )
@@ -89,10 +98,43 @@ def optimize_route(police_station, hotspots):
     transitions = route.transitions
     # according to google documentation, route looks like this:
     # (start) -> transitions[0] -> visits[0] -> transitions[1] -> ... -> transitions[n] -> visits[n] -> transitions[n+1] -> (end)
-    encoded_polyline = route.route_polyline
+    encoded_polyline = route.route_polyline.points
 
-    return visits, transitions, encoded_polyline
+    output_visits = []
+    for visit in visits:
+        latitude = hotspots[visit.shipment_index]["latitude"]
+        longitude = hotspots[visit.shipment_index]["longitude"]
+        detour_seconds = visit.detour.seconds
+        start_time_seconds = visit.start_time.timestamp()
+        output_visits.append({
+            "latitude": latitude,
+            "longitude": longitude,
+            "detour_seconds": detour_seconds,
+            "start_time_seconds": start_time_seconds
+        })
 
+    output_transitions = []
+    for transition in transitions:
+        travel_duration_seconds = transition.travel_duration.seconds
+        travel_distance_meters = transition.travel_distance_meters
+        output_transitions.append({
+            "travel_duration": travel_duration_seconds,
+            "travel_distance": travel_distance_meters
+        })
+
+    output = {
+        "visits": output_visits,
+        "transitions": output_transitions,
+        "encoded_polyline": encoded_polyline
+    }
+
+    with open('out/output.json', 'w', encoding='utf-8') as f:
+        json.dump(output, f, ensure_ascii=False, indent=4)
+
+    return output
+
+test_start_time = "2024-05-30T00:00:00.000Z"
+test_end_time = "2024-05-31T06:00:00.000Z"
 
 test_police_station = {
     "address": "31 Yishun Central, Singapore 768827",
@@ -177,19 +219,20 @@ test_hotspots = [
 
 test_start_end_location = test_police_station["location"]
 test_hotspot_locations = [item["location"] for item in test_hotspots]
+output = optimize_route(test_start_end_location, test_hotspot_locations, test_start_time, test_end_time)
 
-visits, transitions, encoded_polyline = optimize_route(test_start_end_location, test_hotspot_locations)
+# visits, transitions, encoded_polyline = optimize_route(test_start_end_location, test_hotspot_locations)
 
-# save the data
-save_file = open("output.txt", "w")
-save_file.write("visits:\n")
-save_file.writelines([(str(obj) + "\n") for obj in visits])
-save_file.write("---\n")
-save_file.write("transitions:\n")
-save_file.writelines([(str(obj) + "\n") for obj in transitions])
-save_file.write("---\n")
-save_file.write("polyline:\n")
-save_file.write(str(encoded_polyline))
-save_file.close()
+# # save the data
+# save_file = open("output.txt", "w")
+# save_file.write("visits:\n")
+# save_file.writelines([(str(obj) + "\n") for obj in visits])
+# save_file.write("---\n")
+# save_file.write("transitions:\n")
+# save_file.writelines([(str(obj) + "\n") for obj in transitions])
+# save_file.write("---\n")
+# save_file.write("polyline:\n")
+# save_file.write(str(encoded_polyline))
+# save_file.close()
 
 
