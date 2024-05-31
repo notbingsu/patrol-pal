@@ -1,9 +1,40 @@
+import functions_framework
+from google.maps import routeoptimization_v1 as ro
+import json
+
+@functions_framework.http
+def optimise_route_request(request):
+    """HTTP Cloud Function.
+    Args:
+        request (flask.Request): The request object.
+        <https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data>
+    Returns:
+        The response text, or any set of values that can be turned into a
+        Response object using `make_response`
+        <https://flask.palletsprojects.com/en/1.1.x/api/#flask.make_response>.
+    """
+    request_json = request.get_json(silent=True)
+    if request_json is None:
+        # throw some error
+        return None
+    for x in ['police_station', 'hotspots', 'start_time', 'end_time']:
+        if x not in request_json:
+            # throw some error
+            return None
+    police_station = request_json['police_station']
+    hotspots = request_json['hotspots']
+    start_time = request_json['start_time']
+    end_time = request_json['end_time']
+
+    output = optimize_route(police_station, hotspots, start_time, end_time)
+    return json.dumps(output)
+
+
+
 """
 Based on selected hotspots, finds the best route to travel all hotspots in the minimum amount of time.
 Travelling time is retrieved from Google Maps API.
 """
-from google.maps import routeoptimization_v1 as ro
-import json
 
 def optimize_route(police_station, hotspots, start_time, end_time):
     """
@@ -128,111 +159,97 @@ def optimize_route(police_station, hotspots, start_time, end_time):
         "encoded_polyline": encoded_polyline
     }
 
-    with open('out/output.json', 'w', encoding='utf-8') as f:
-        json.dump(output, f, ensure_ascii=False, indent=4)
-
     return output
 
-test_start_time = "2024-05-30T00:00:00.000Z"
-test_end_time = "2024-05-31T06:00:00.000Z"
 
-test_police_station = {
-    "address": "31 Yishun Central, Singapore 768827",
-    "location": {
+"""
+Test Request with Sample Data
+"""
+
+test_request = {
+    "police_station": {
         "latitude": 1.4294854895835194, 
         "longitude": 103.84014800478174
-    }
-}
-
-test_hotspots = [
-    {
-        "address": "433 Yishun Ave 6, Singapore 760433",
-        "location": {
+    },
+    "hotspots": [
+        {
             "latitude": 1.4210816436674003, 
             "longitude": 103.84761568650755
-        }
-    },
-    {
-        "address": "51 Yishun Ave 11, Singapore 768867",
-        "location": {
+        },
+        {
             "latitude": 1.4251709344391268,
             "longitude": 103.84476571069965
-        }
-    },
-    {
-        "address": "60 Yishun Ave 4, Singapore 769027",
-        "location": {
+        },
+        {
             "latitude": 1.424407006907169, 
             "longitude": 103.84098276837128
-        }
-    },
-    {
-        "address": "3 Yishun Ring Rd, Singapore 768675",
-        "location": {
+        },
+        {
             "latitude": 1.425038977195743, 
             "longitude": 103.8298203106997
-        }
-    },
-    {
-        "address": "598 Yishun Ring Rd, Singapore 768698",
-        "location": {
+        },
+        {
             "latitude": 1.4182852241270225, 
             "longitude": 103.8410208665204
-        }
-    },
-    {
-        "address": "2 Yishun Walk, Singapore 767944",
-        "location": {
+        },
+        {
             "latitude": 1.4143117474473463, 
             "longitude": 103.8307012376845
-        }
-    },
-    {
-        "address": "2 Yishun Central 2, Singapore 768024",
-        "location": {
+        },
+        {
             "latitude": 1.4239741964823807, 
             "longitude": 103.83678755911649
-        }
-    },
-    {
-        "address": "405 Yishun Ave 6, Singapore 760405",
-        "location": {
+        },
+        {
             "latitude": 1.4268853888536341, 
             "longitude": 103.84922392217099
-        }
-    },
-    {
-        "address": "333 Yishun Street 31, Singapore 760333",
-        "location": {
+        },
+        {
             "latitude": 1.4314624730771077, 
             "longitude": 103.84505305302795
-        }
-    },
-    {
-        "address": "Yishun Ave 4, #01-01 Blk 507, Singapore 760507",
-        "location": {
+        },
+        {
             "latitude": 1.4156091006464437, 
             "longitude": 103.83967627842229
         }
-    }
-]
+    ],
+    "start_time" : "2024-05-30T00:00:00.000Z",
+    "end_time" : "2024-05-31T06:00:00.000Z"
+}
 
-test_start_end_location = test_police_station["location"]
-test_hotspot_locations = [item["location"] for item in test_hotspots]
-output = optimize_route(test_start_end_location, test_hotspot_locations, test_start_time, test_end_time)
+import requests
+from dotenv import load_dotenv
+import os
+load_dotenv()
+API_KEY = os.environ.get("API_KEY")
 
-# visits, transitions, encoded_polyline = optimize_route(test_start_end_location, test_hotspot_locations)
+gateway_url = "https://patrol-pal-route-optimisation-gateway-6vhrt1mo.an.gateway.dev"
+url = gateway_url + "/optimise-route" + "?key=" + API_KEY
+session = requests.Session()
+session.headers.update({
+    'Content-Type':'application/json',
+    })
+response = session.post(url, json=test_request)
+if response.ok:
+    print(response.status_code)
+    print(response.json())
+else:
+    print(response.status_code)
+    print(response.content)
 
-# # save the data
-# save_file = open("output.txt", "w")
-# save_file.write("visits:\n")
-# save_file.writelines([(str(obj) + "\n") for obj in visits])
-# save_file.write("---\n")
-# save_file.write("transitions:\n")
-# save_file.writelines([(str(obj) + "\n") for obj in transitions])
-# save_file.write("---\n")
-# save_file.write("polyline:\n")
-# save_file.write(str(encoded_polyline))
-# save_file.close()
+def test02(request_json):
+    for x in ['police_station', 'hotspots', 'start_time', 'end_time']:
+        if x not in request_json:
+            # throw some error
+            return None
+    police_station = request_json['police_station']
+    hotspots = request_json['hotspots']
+    start_time = request_json['start_time']
+    end_time = request_json['end_time']
+
+    output = optimize_route(police_station, hotspots, start_time, end_time)
+    return json.dumps(output)
+
+
 
 
