@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get 'home/index'
   get 'patrol', to: 'patrol#panel'
   get 'reports', to: 'reports#index'
+  get 'api_key', to: 'api_controller#api_key'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
