@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :locations
   resources :reports
   devise_for :users do
     get '/users/sign_out' => 'devise/sessions#destroy'
@@ -8,6 +9,7 @@ Rails.application.routes.draw do
   get 'patrol', to: 'patrol#panel'
   get 'reports', to: 'reports#index'
   get 'api_key', to: 'api_controller#api_key'
+  get 'generate_route', to: 'reports#generate_route'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

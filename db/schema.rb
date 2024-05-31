@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_30_103018) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_31_113031) do
+  create_table "locations", force: :cascade do |t|
+    t.string "address"
+    t.float "ltd"
+    t.float "lng"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lng"], name: "index_locations_on_lng"
+    t.index ["ltd"], name: "index_locations_on_ltd"
+  end
+
   create_table "reports", force: :cascade do |t|
     t.string "title"
     t.text "body"

@@ -4,6 +4,10 @@ Travelling time is retrieved from Google Maps API.
 """
 from google.maps import routeoptimization_v1 as ro
 import json
+import os
+
+# credential_path = "C:\\Users\\bingsu\\AppData\Roaming\gcloud\application_default_credentials.json"
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credential_path
 
 def optimize_route(police_station, hotspots, start_time, end_time):
     """
@@ -220,6 +224,7 @@ test_hotspots = [
 test_start_end_location = test_police_station["location"]
 test_hotspot_locations = [item["location"] for item in test_hotspots]
 output = optimize_route(test_start_end_location, test_hotspot_locations, test_start_time, test_end_time)
+print(output)
 
 # visits, transitions, encoded_polyline = optimize_route(test_start_end_location, test_hotspot_locations)
 

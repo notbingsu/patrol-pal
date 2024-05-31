@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
 
-// Connects to data-controller="google-map"
 export default class extends Controller {
   static targets = [
     "myMap",
@@ -9,18 +8,23 @@ export default class extends Controller {
     "locationName",
   ];
 
-  connect() {
-    let lat = 34.87;
-    let lng = -111.82;
-
+  async connect() {
+    const response = await fetch(
+      "/locations.json"
+    );
+    const data = await response.json();
     //this.latTarget.value = lat
     //this.lngTarget.value = lng
-    this.initMap(lat, lng);
+    // let lat = 1.424407006907169;
+    // let lng = 103.84098276837128;
+    this.initMap(data);
   }
 
-  async initMap(lat, lng) {
+  async initMap(data) {
     // The location of Uluru
-    const position = { lat: lat, lng: lng };
+    let lat = data[0].ltd;
+    let lng = data[0].lng;
+    const position = { lat, lng };
     let mapId = this.myMapTarget;
 
     const { Map } =
@@ -29,7 +33,7 @@ export default class extends Controller {
 
     let map = new Map(mapId, {
       center: position,
-      zoom: 10,
+      zoom: 15,
       mapId: mapId,
     });
 
@@ -40,21 +44,26 @@ export default class extends Controller {
     //   title: "Uluru",
     // });
 
-    this.addSingleMarker(position, map);
+    for (let i = 1; i <= data.length; i++) {
+      this.addSingleMarker(
+        {
+          lat: data[i].ltd,
+          lng: data[i].lng,
+        },
+        map,
+        i
+      );
+    }
     // this.addMultipleMarker(map)
   }
 
-  addSingleMarker(position, map) {
+  addSingleMarker(position, map, index) {
     const marker = new google.maps.Marker({
       position,
       map,
       title: `This is single marker`,
-      label: `1`,
+      label: `${index}`,
     });
-
-    marker.setAnimation(
-      google.maps.Animation.BOUNCE
-    ); //bouncing animation of marker
   }
 
   updateCordinate() {
