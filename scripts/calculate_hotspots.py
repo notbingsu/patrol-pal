@@ -1,6 +1,27 @@
+import functions_framework
 from sklearn.cluster import DBSCAN
 import pandas as pd
-import matplotlib.pyplot as plt
+
+@functions_framework.http
+def calculate_hotspots_request(request):
+    """HTTP Cloud Function.
+    Args:
+        request (flask.Request): The request object.
+        <https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data>
+    Returns:
+        The response text, or any set of values that can be turned into a
+        Response object using `make_response`
+        <https://flask.palletsprojects.com/en/1.1.x/api/#flask.make_response>.
+    """
+    request_json = request.get_json(silent=True)
+    if request_json is None or 'locations' not in request_json:
+        # throw some error
+        return 'json formatted incorrectly!'
+    locations = request_json['locations']
+    # locations is a list of dictionaries containing "latitude" and "longitude"
+    df = pd.DataFrame(locations)[['latitude', 'longitude']]
+    hotspots = calculate_hotspots(df)
+    return hotspots.to_dict('records')
 
 def calculate_hotspots(df: pd.DataFrame, eps: float = 0.005, min_samples: int = 3, include_outliers: bool = True):
     """
@@ -27,11 +48,6 @@ def calculate_hotspots(df: pd.DataFrame, eps: float = 0.005, min_samples: int = 
     # cluster dense locations together using DBSCAN
     clustering = DBSCAN(eps=eps, min_samples=min_samples).fit(df[["latitude", "longitude"]])
     df["cluster"] = clustering.labels_
-    # For visualisation, feel free to examine this scatter plot:
-    # plt.scatter(df["latitude"], df["longitude"], c=df["cluster"])
-    # for i, txt in enumerate(df["address"]):
-    #     plt.annotate(txt, (df["latitude"][i], df["longitude"][i]))
-    # plt.show()
 
     # calculate centroids
     centroids = df[["latitude", "longitude", "cluster"]].groupby("cluster").mean()
@@ -40,11 +56,28 @@ def calculate_hotspots(df: pd.DataFrame, eps: float = 0.005, min_samples: int = 
     centroids = centroids.reset_index()
     if include_outliers:
         # assume all outliers as hotspots, create a hotspot table
-        hotspots = pd.concat([df[df["cluster"] == -1], centroids])[["latitude", "longitude"]].reset_index(drop=True)
+        hotspots = pd.concat([df[df["cluster"] == -1], centroids]).reset_index(drop=True)[["latitude", "longitude"]]
     else:
-        hotspots = centroids.reset_index(drop=True)
+        hotspots = centroids.reset_index(drop=True)[["latitude", "longitude"]]
+
     return hotspots
-    
+
+
+"""
+Test Request with Sample Data
+
+Request should contain list of locations that looks like this:
+    Note: the items inside "locations" are allowed to have other metadata, like "address". 
+    The parsing will only look at the "latitude" and "longitude" values.
+---
+{
+    "locations" : list[{
+        "latitude" : float
+        "longitude" : float
+    }]
+}
+"""
+
 test = [
     ("433 Yishun Ave 6, Singapore 760433", 1.4209882, 103.8473447),
     ("51 Yishun Ave 11, Singapore 768867", 1.4249457, 103.8447228),
@@ -57,6 +90,63 @@ test = [
     ("333 Yishun Street 31, Singapore 760333", 1.4314732, 103.8450316),
 ]
 
-df = pd.DataFrame(test)
-df.columns = ["address", "latitude", "longitude"]
-print(calculate_hotspots(df))
+test_request = {
+    "locations": [
+        {
+            "latitude": 1.4209882,
+            "longitude": 103.8473447
+        },
+        {
+            "latitude": 1.4249457,
+            "longitude": 103.8447228
+        },
+        {
+            "latitude": 1.4242354,
+            "longitude": 103.8409184
+        },
+        {
+            "latitude": 1.4249639,
+            "longitude": 103.8297774
+        },
+        {
+            "latitude": 1.4182745,
+            "longitude": 103.8410316
+        },
+        {
+            "latitude": 1.4143332,
+            "longitude": 103.8307227
+        },
+        {
+            "latitude": 1.4240983, 
+            "longitude": 103.8374077
+        },
+        {
+            "latitude": 1.4267622,
+            "longitude": 103.8492027
+        },
+        {
+            "latitude": 1.4314732,
+            "longitude": 103.8450316
+        }
+    ]
+}
+
+import requests
+from dotenv import load_dotenv
+import os
+load_dotenv()
+API_KEY = os.environ.get("API_KEY")
+
+gateway_url = "https://patrol-pal-route-optimisation-gateway-6vhrt1mo.an.gateway.dev"
+url = gateway_url + "/calculate-hotspots" + "?key=" + API_KEY
+session = requests.Session()
+session.headers.update({
+    'Content-Type':'application/json',
+    })
+response = session.post(url, json=test_request)
+if response.ok:
+    print(response.status_code)
+    print(response.json())
+else:
+    print(response.status_code)
+    print(response.content)
