@@ -237,19 +237,6 @@ else:
     print(response.status_code)
     print(response.content)
 
-def test02(request_json):
-    for x in ['police_station', 'hotspots', 'start_time', 'end_time']:
-        if x not in request_json:
-            # throw some error
-            return None
-    police_station = request_json['police_station']
-    hotspots = request_json['hotspots']
-    start_time = request_json['start_time']
-    end_time = request_json['end_time']
-
-    output = optimize_route(police_station, hotspots, start_time, end_time)
-    return json.dumps(output)
-
 
 
 
