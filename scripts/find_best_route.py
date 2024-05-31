@@ -16,8 +16,8 @@ def optimize_route(police_station, hotspots):
         represents a list of locations of hotspots which are to be patrolled, in any order
     A LatLng object should look like this:
     {
-        "latitude" : str
-        "longitude" : str
+        "latitude" : float
+        "longitude" : float
     }
     
     Returns
