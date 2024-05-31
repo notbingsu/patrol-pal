@@ -1,0 +1,33 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Reports</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Index</th>
+      <th scope="col">Title</th>
+      <th scope="col">Date/time</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @reports.each do |report| %>
+      <tr>
+        <th scope="row">#</th>
+        <td><%= link_to report.title, report %></td>
+        <td><%= report.time %></td>
+        <td><%= link_to "X", report , data:{ turbo_method:"delete", turbo_confirm:"Confirm delete?" }, class:"btn btn-danger"%></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<div id="reports">
+  <% @reports.each do |report| %>
+    <%= render report %>
+    <p>
+      <%= link_to "Show this report", report %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New report", new_report_path %>
