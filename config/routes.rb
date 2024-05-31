@@ -1,8 +1,11 @@
 Rails.application.routes.draw do
   resources :reports
-  devise_for :users
+  devise_for :users do
+    get '/users/sign_out' => 'devise/sessions#destroy'
+  end
   root 'home#index'
   get 'home/index'
+  get 'patrol', to: 'patrol#panel'
   get 'reports', to: 'reports#index'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

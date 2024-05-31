@@ -12,27 +12,23 @@
   <% end %>
 
   <div>
-    <%= form.label :title, style: "display: block" %>
-    <%= form.text_field :title %>
+    <%= form.text_field :title, placeholder:"TITLE"%>
   </div>
 
   <div>
-    <%= form.label :body, style: "display: block" %>
-    <%= form.text_area :body %>
+    <%= form.text_area :body, placeholder:"DESCRIPTION" %>
   </div>
 
   <div>
-    <%= form.label :lat, style: "display: block" %>
-    <%= form.text_field :lat %>
+    <%= form.text_field :lat, placeholder:"LAT" %>
   </div>
 
   <div>
-    <%= form.label :lng, style: "display: block" %>
-    <%= form.text_field :lng %>
+    <%= form.text_field :lng, placeholder:"LNG" %>
   </div>
 
   <div>
-    <%= form.label :time, style: "display: block" %>
+    <%= form.label :time, style: "display: block; color: white;" %>
     <%= form.datetime_field :time %>
   </div>
 

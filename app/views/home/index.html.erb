@@ -1,2 +1,11 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<% if user_signed_in? %>
+    <h1 style="color:white; font-size:80px; font-family: 'Blinker', sans-serif;">SHIFTS</h1>
+<% else %>
+    <div class="d-flex align-items-center p-2" style="height:80vh;">
+        <div>
+            <h1 style="color:white; font-size:100px; font-family: 'Blinker', sans-serif;">PATROL PAL</h1>
+            <p style="color:white;">Partnered with SPF</p>
+        </div>
+        <%= image_tag 'police.png', alt: 'police graphic', style: 'position:absolute; bottom:0; right:0; width:40%; height:auto;'%>
+    </div>
+<% end %>
