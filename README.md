@@ -9,7 +9,7 @@ Implemented Features:
 - CRUD for crime reports
 - Frontend Maps interface
 
-Even though we elaborated on these processes and concepts in the video, these features are **NOT** available for use via the Ruby on Rails application. Feel free to look at `/scripts` for the Cloud Functions code that implements these.:
+Even though we elaborated on these processes and concepts in the video, these features are **NOT** available for use via the Ruby on Rails application. Feel free to look at `/scripts` for the Cloud Functions code that implements these:
 - Calculating hotspots based on crime data
 - Generating patrol routes based on hotspots
 
