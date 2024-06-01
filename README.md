@@ -1,24 +1,31 @@
-# README
+# PatrolPal
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A Ruby on Rails application that analyses crime data and generates optimised patrol routes for police officers.
 
-Things you may want to cover:
+## Features
 
-* Ruby version
+Implemented Features:
+- User authentication
+- CRUD for crime reports
+- Frontend Maps interface
 
-* System dependencies
+Even though we elaborated on these processes and concepts in the video, these features are **NOT** available for use via the Ruby on Rails application. Feel free to look at `/scripts` for the Cloud Functions code that implements these.:
+- Calculating hotspots based on crime data
+- Generating patrol routes based on hotspots
 
-* Configuration
+Future Features:
+- Implementing the above features in the Ruby on Rails application
+- Segregate crime data by type of crime
+- Cluster crime based on more data points, such as time
 
-* Database creation
+## Installation
 
-* Database initialization
+Ruby version: 3.3.1
 
-* How to run the test suite
+This is a Ruby on Rails application. To run it, you will need to have Ruby and Rails installed on your machine.
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+1. Clone the repository
+2. Run `bundle install` to install the required gems
+3. Run `rails db:migrate` to create the database
+4. Run `rails server` to start the server
+5. Visit `http://localhost:3000` in your browser
