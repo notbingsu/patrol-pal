@@ -61,6 +61,23 @@ class LocationsController < ApplicationController
     end
   end
 
+  def reverse_geocode_all
+    Location.all.each do |location|
+      lat_lng = "#{location.ltd},#{location.lng}"
+      api_key = 'AIzaSyARTCBV8pAR9OwEGjutqbosWJxN5xolCik'
+      url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=#{lat_lng}&key=#{api_key}"
+      response = HTTParty.get(url)
+      if response.code == 200
+          data = JSON.parse(response.body)
+          location.update!(address: data['results'][0]['formatted_address'])
+      else
+        location.update!(address: "Unknown")
+      end
+
+    end
+    redirect_to locations_url
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_location

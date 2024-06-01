@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-
+var markersArray = [];
 export default class extends Controller {
   static targets = [
     "myMap",
@@ -13,15 +13,17 @@ export default class extends Controller {
       "/locations.json"
     );
     const data = await response.json();
-    //this.latTarget.value = lat
-    //this.lngTarget.value = lng
-    // let lat = 1.424407006907169;
-    // let lng = 103.84098276837128;
+    // const polylineresponse = await fetch(
+    //   "/polylines.json"
+    // );
+    // const polyline =
+    //   "{evGyfxxRHFLLn@k@VUl@g@b@UNIPGTIVGj@Od@E\\E\\CR?jA?PBhCb@|@NV?F@`@JZFVF~@Lv@Vj@Z^VtAgAf@[FEJGK]SHOHOLGB[RUHEBA?C@E@E?A?C?G?EAYIMCEAICMCOAE?G@C?A@A@A@AB?Fv@Vj@Z^VtAgAf@[FEJGJGr@SFC`A[fA[~@YTIB?JEJCTGn@Sl@Sf@OTGHCJAFAJAJAJ?T@PBNBRBZJ`@LZJ\\Jr@VpA`@~@XbAXZHXJv@TFBPDx@Vv@RjBn@b@JRJ`@LB@p@RlA^dBh@v@VND`Bh@@@RDP@TBFAN?XCr@O~@YXGFRhBhIf@hCPlANv@Lv@?DD\\Ht@LdAJt@@JBJPf@X~@Nb@JXN^`@t@PV^d@RTTTLRNTNVHNFPLZJZVdAFXBN@FDb@BNDn@@bA@\\Aj@EdAA\\Cb@[Ms@U_@OeAc@{@_@sAm@QK_Ac@w@[}@]}Ao@YKYKaA]W@I@C@C@GHKLGLADILABABC@Kb@M`@La@Jc@?E?C@AHU@?DMBIBK?Q?CAEMSm@WyCqAk@SSIMEQIy@[EAo@UQI{@[KGq@WWK_CaAsBy@c@fAIZq@hBMVQZMRQPIHOJMFSHUHi@NeAZ]JSFSDODUFQB[BM@]@G?i@@iDD{CDU?w@A[?WAI?GAMCMC]K]KaEqACAQCIAIAMA[?i@BPxEv@v@DDFDDF@@?B?@?BCDGJIHEFEBEACAECKKEEEGCG?e@?o@QyE?Mn@AX?L@L@TD@@nCt@nA^^JLBLBH@H?b@?fA?Ba@@W?U?y@Ai@E{D?e@CmCC{@?iA?YB{@?qDCaBS?U?iACa@?i@CE?D?h@B`@?hABT?R?PA`A?bCErAAbA@N@F?FAF?HAHCFCJKFW@[Bc@?Q@MBIDKBE@ABCFCXKNEf@Ov@UXKj@Qn@UZKz@SxAe@n@SKa@Qq@Kc@AS?O?UBUDYRm@`@iAFSLa@@CV{@H]FU@EDU@Y?WAS?AAOCSEUGSEK?AOY_@m@S[Y[[]A?_@[YUYO]S]M_@Oe@Kc@KUC@MDk@Bs@@e@@k@?S@W@S@MBM@KDQHYHSHQJSJMRQJKJKl@m@h@u@H]?E?EAM@C?CqAiACCyAuAW^OOUOMGU?[?O?ICEACEUUAAC?AAC?A?o@@kA@jAAn@A@?B?@@B?@@TTBDD@HBN?Z?T?LFTNNNV_@aBuAGEq@k@_@]aC{Bg@g@m@i@o@k@o@i@C@EAE?EAE?G?G@E?SLg@RUFWDi@BmABa@@O?W@i@@U?wABQ@sADY?U@MAS?i@@C?W?g@@}@@i@@wCD@v@?R@B?@@B@@@@B@B@b@CRAZCdAARAP?@?@@@?@?@B@@B@@D?D@J@V?@BvD@DDDBN?RBZ?b@Ab@DnAClAANyA?DxA?ZRAJ?z@?RAN?f@h@^`@TT?@@@?@?@A@[^Z_@@A?A?AAA?AUU_@a@g@i@O?S@{@?K?S@?[EyAwCFS?{@?_A@eDDw@Dc@DG?A??@A??@A?A?A??@A?AAA?A?[NE@GDKDIFA@GFIHy@`AWZ_@`@Y\\YZYXIIw@q@OSGKGMWm@O_@Qa@Wm@_@{@CGYk@_@NFNDJf@jAFJN\\Zr@\\t@DNFJ?@?AGKEO]u@[s@O]GKg@kAEKGO^OXj@BF^z@Vl@P`@N^Vl@FLFJNRv@p@HHs@p@CDABEDGLCHABCJAHAJAP?j@@f@?\\A~@ATCPEPCHEJEJGJs@x@WZeAlAeDbEdAlAn@t@`@f@ZXx@x@\\\\RT@@HDZN\\L\\LlAX~@TJBPi@HUHQLS?AJOZe@FIZa@PSMMIG";
+    // const polyline =
+    //   await polylineresponse.json();
     this.initMap(data);
   }
 
   async initMap(data) {
-    // The location of Uluru
     let lat = data[0].ltd;
     let lng = data[0].lng;
     const position = { lat, lng };
@@ -29,47 +31,79 @@ export default class extends Controller {
 
     const { Map } =
       await google.maps.importLibrary("maps");
-    // const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
     let map = new Map(mapId, {
       center: position,
       zoom: 15,
-      mapId: mapId,
     });
+    // var encoded_path = polyline;
+    var encoded_path =
+      "{evGyfxxRHFLLn@k@VUl@g@b@UNIPGTIVGj@Od@E\\E\\CR?jA?PBhCb@|@NV?F@`@JZFVF~@Lv@Vj@Z^VtAgAf@[FEJGK]SHOHOLGB[RUHEBA?C@E@E?A?C?G?EAYIMCEAICMCOAE?G@C?A@A@A@AB?Fv@Vj@Z^VtAgAf@[FEJGJGr@SFC`A[fA[~@YTIB?JEJCTGn@Sl@Sf@OTGHCJAFAJAJAJ?T@PBNBRBZJ`@LZJ\\Jr@VpA`@~@XbAXZHXJv@TFBPDx@Vv@RjBn@b@JRJ`@LB@p@RlA^dBh@v@VND`Bh@@@RDP@TBFAN?XCr@O~@YXGFRhBhIf@hCPlANv@Lv@?DD\\Ht@LdAJt@@JBJPf@X~@Nb@JXN^`@t@PV^d@RTTTLRNTNVHNFPLZJZVdAFXBN@FDb@BNDn@@bA@\\Aj@EdAA\\Cb@[Ms@U_@OeAc@{@_@sAm@QK_Ac@w@[}@]}Ao@YKYKaA]W@I@C@C@GHKLGLADILABABC@Kb@M`@La@Jc@?E?C@AHU@?DMBIBK?Q?CAEMSm@WyCqAk@SSIMEQIy@[EAo@UQI{@[KGq@WWK_CaAsBy@c@fAIZq@hBMVQZMRQPIHOJMFSHUHi@NeAZ]JSFSDODUFQB[BM@]@G?i@@iDD{CDU?w@A[?WAI?GAMCMC]K]KaEqACAQCIAIAMA[?i@BPxEv@v@DDFDDF@@?B?@?BCDGJIHEFEBEACAECKKEEEGCG?e@?o@QyE?Mn@AX?L@L@TD@@nCt@nA^^JLBLBH@H?b@?fA?Ba@@W?U?y@Ai@E{D?e@CmCC{@?iA?YB{@?qDCaBS?U?iACa@?i@CE?D?h@B`@?hABT?R?PA`A?bCErAAbA@N@F?FAF?HAHCFCJKFW@[Bc@?Q@MBIDKBE@ABCFCXKNEf@Ov@UXKj@Qn@UZKz@SxAe@n@SKa@Qq@Kc@AS?O?UBUDYRm@`@iAFSLa@@CV{@H]FU@EDU@Y?WAS?AAOCSEUGSEK?AOY_@m@S[Y[[]A?_@[YUYO]S]M_@Oe@Kc@KUC@MDk@Bs@@e@@k@?S@W@S@MBM@KDQHYHSHQJSJMRQJKJKl@m@h@u@H]?E?EAM@C?CqAiACCyAuAW^OOUOMGU?[?O?ICEACEUUAAC?AAC?A?o@@kA@jAAn@A@?B?@@B?@@TTBDD@HBN?Z?T?LFTNNNV_@aBuAGEq@k@_@]aC{Bg@g@m@i@o@k@o@i@C@EAE?EAE?G?G@E?SLg@RUFWDi@BmABa@@O?W@i@@U?wABQ@sADY?U@MAS?i@@C?W?g@@}@@i@@wCD@v@?R@B?@@B@@@@B@B@b@CRAZCdAARAP?@?@@@?@?@B@@B@@D?D@J@V?@BvD@DDDBN?RBZ?b@Ab@DnAClAANyA?DxA?ZRAJ?z@?RAN?f@h@^`@TT?@@@?@?@A@[^Z_@@A?A?AAA?AUU_@a@g@i@O?S@{@?K?S@?[EyAwCFS?{@?_A@eDDw@Dc@DG?A??@A??@A?A?A??@A?AAA?A?[NE@GDKDIFA@GFIHy@`AWZ_@`@Y\\YZYXIIw@q@OSGKGMWm@O_@Qa@Wm@_@{@CGYk@_@NFNDJf@jAFJN\\Zr@\\t@DNFJ?@?AGKEO]u@[s@O]GKg@kAEKGO^OXj@BF^z@Vl@P`@N^Vl@FLFJNRv@p@HHs@p@CDABEDGLCHABCJAHAJAP?j@@f@?\\A~@ATCPEPCHEJEJGJs@x@WZeAlAeDbEdAlAn@t@`@f@ZXx@x@\\\\RT@@HDZN\\L\\LlAX~@TJBPi@HUHQLS?AJOZe@FIZa@PSMMIG";
+    var decoded_path =
+      google.maps.geometry.encoding.decodePath(
+        encoded_path
+      );
 
-    // The marker, positioned at Uluru
-    // const marker = new AdvancedMarkerElement({
-    //   map: map,
-    //   position: position,
-    //   title: "Uluru",
-    // });
+    var setRegion = new google.maps.Polyline({
+      path: decoded_path,
+      strokeColor: "#FF0000",
+      strokeOpacity: 1.0,
+      strokeWeight: 2,
+      map: map,
+    });
+    setRegion.setMap(map);
 
-    for (let i = 1; i <= data.length; i++) {
-      this.addSingleMarker(
+    // Clear existing markers
+    this.clearMarkers();
+
+    // Add new markers
+    for (let i = 0; i < data.length; i++) {
+      const marker = this.addSingleMarker(
         {
           lat: data[i].ltd,
           lng: data[i].lng,
         },
         map,
-        i
+        i + 1
       );
+      markersArray.push(marker);
     }
-    // this.addMultipleMarker(map)
   }
 
   addSingleMarker(position, map, index) {
-    const marker = new google.maps.Marker({
+    return new google.maps.Marker({
       position,
       map,
-      title: `This is single marker`,
+      title: `This is marker ${index}`,
       label: `${index}`,
     });
   }
 
-  updateCordinate() {
+  clearMarkers() {
+    markersArray.forEach((marker) => {
+      marker.setMap(null);
+    });
+    markersArray = [];
+  }
+
+  decodeLevels(encodedLevelsString) {
+    var decodedLevels = [];
+    for (
+      var i = 0;
+      i < encodedLevelsString.length;
+      ++i
+    ) {
+      var level =
+        encodedLevelsString.charCodeAt(i) - 63;
+      decodedLevels.push(level);
+    }
+    return decodedLevels;
+  }
+
+  updateCordinate(event) {
     if (
-      (event.currentTarget.dataset.googleMapTarget =
-        "lat")
+      event.currentTarget.dataset
+        .googleMapTarget === "lat"
     ) {
       this.initMap(
         parseFloat(event.currentTarget.value),

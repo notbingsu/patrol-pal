@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Polylines</h1>
+
+<div id="polylines">
+  <% @polylines.each do |polyline| %>
+    <%= render polyline %>
+    <p>
+      <%= link_to "Show this polyline", polyline %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New polyline", new_polyline_path %>

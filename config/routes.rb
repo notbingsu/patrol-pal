@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :polylines
   resources :locations
   resources :reports
   devise_for :users do
@@ -11,6 +12,8 @@ Rails.application.routes.draw do
   get 'reports', to: 'reports#index'
   get 'api_key', to: 'api_controller#api_key'
   get 'generate_route', to: 'reports#generate_route'
+  post 'reverse_geocode_all', to: 'locations#reverse_geocode_all'
+  post 'submit_reports', to: 'reports#submit_reports'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

@@ -1,26 +1,22 @@
-<h2>Log in</h2>
+<div class="d-flex align-items-center p-2 gap-3" style="height:80vh;">
+  <h2 style="color:white; font-size:100px; font-family: 'Blinker', sans-serif;">Sign in</h2>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password %><br />
-    <%= f.password_field :password, autocomplete: "current-password" %>
-  </div>
-
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <%= f.check_box :remember_me %>
-      <%= f.label :remember_me %>
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <div>
+    <div class="field m-3">
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder:"Email"%>
     </div>
+
+    <div class="field m-3">
+      <%= f.password_field :password, autocomplete: "current-password", placeholder:"Password"%>
+    </div>
+
+    <div class="actions m-3">
+      <%= f.submit "Log in", class:"btn btn-dark" %>
+    </div>
+  </div>
   <% end %>
 
-  <div class="actions">
-    <%= f.submit "Log in" %>
-  </div>
-<% end %>
+  <%= image_tag 'police.png', alt: 'police graphic', style: 'position:absolute; bottom:0; right:0; width:40%; height:auto;'%>
 
-<%= render "devise/shared/links" %>
+</div>

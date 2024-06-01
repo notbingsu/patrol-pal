@@ -21,72 +21,15 @@
 </table>
 
 <%= button_to "New report", new_report_path, class:"btn btn-secondary" %>
-<button id="submit-report">request</button>
-
-<script>
-  document.getElementById("submit-report").addEventListener("click", async function(){
-    const url = "https://patrol-pal-route-optimisation-gateway-6vhrt1mo.an.gateway.dev/optimise-route?key=AIzaSyARTCBV8pAR9OwEGjutqbosWJxN5xolCik"
-    const data = {
-    "police_station": {
-        "latitude": 1.4294854895835194,
-        "longitude": 103.84014800478174
-    },
-    "hotspots": [
-        {
-            "latitude": 1.4210816436674003,
-            "longitude": 103.84761568650755
-        },
-        {
-            "latitude": 1.4251709344391268,
-            "longitude": 103.84476571069965
-        },
-        {
-            "latitude": 1.424407006907169,
-            "longitude": 103.84098276837128
-        },
-        {
-            "latitude": 1.425038977195743,
-            "longitude": 103.8298203106997
-        },
-        {
-            "latitude": 1.4182852241270225,
-            "longitude": 103.8410208665204
-        },
-        {
-            "latitude": 1.4143117474473463,
-            "longitude": 103.8307012376845
-        },
-        {
-            "latitude": 1.4239741964823807,
-            "longitude": 103.83678755911649
-        },
-        {
-            "latitude": 1.4268853888536341,
-            "longitude": 103.84922392217099
-        },
-        {
-            "latitude": 1.4314624730771077,
-            "longitude": 103.84505305302795
-        },
-        {
-            "latitude": 1.4156091006464437,
-            "longitude": 103.83967627842229
-        }
-    ],
-    "start_time": "2024-05-30T00:00:00.000Z",
-    "end_time": "2024-05-31T06:00:00.000Z"
-    }
-    const response = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-            'Content-Type':'application/json',
-                    'Access-Control-Allow-Origin':'*',
-                    'Access-Control-Allow-Methods':'POST,PATCH,OPTIONS'
-        }
-    })
-
-    console.log(response)
-
-  })
-</script>
+<%= button_to "Generate hotspots", reverse_geocode_all_path, method: :post, class: "btn btn-primary" %>
+<%= button_to "Submit reports", submit_reports_path, method: :post, class: "btn btn-primary" %>
+<% if @result.present? %>
+  <h2>Result:</h2>
+  <ul>
+    <% @result.each do |key, value| %>
+      <li style="color:white;"><strong><%= key %>:</strong> <%= value %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p style="color:white;">No result available.</p>
+<% end %>

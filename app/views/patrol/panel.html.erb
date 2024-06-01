@@ -7,20 +7,19 @@
         <div class="col col-md-2">
             <div>
                 <ul class="list-group" style="height:80vh; overflow-y:auto; scrollbar-width: none; -ms-overflow-style: none;">
-                    <% @locations.each do |item| %>
-                        <li class="list-group-item">
-                            <%= item['ltd'] %>
-                            <%= item['lng'] %>
-                        </li>
+                    <% if @locations %>
+                        <% @locations.each do |item| %>
+                            <li class="list-group-item">
+                                <% address = item['address'].split(' ')[0..2].join(' ') %>
+                                <%= address %>
+                            </li>
+                        <%end%>
                     <% end %>
                 </ul>
             </div>
         </div>
     </div>
     <div class="d-flex justify-content-center m-2"> 
-        <%# <button id="find-me" class="btn btn-primary">Show my location</button>
-        <p id="status"></p>
-        <a id="map-link" target="_blank"></a> %>
         <button id="follow-me" class="btn btn-primary">START SHIFT</button>
-    </div> 
+    </div>
 </div>

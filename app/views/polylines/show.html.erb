@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @polyline %>
+
+<div>
+  <%= link_to "Edit this polyline", edit_polyline_path(@polyline) %> |
+  <%= link_to "Back to polylines", polylines_path %>
+
+  <%= button_to "Destroy this polyline", @polyline, method: :delete %>
+</div>
