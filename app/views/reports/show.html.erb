@@ -1,10 +1,14 @@
-<p style="color: green"><%= notice %></p>
+<%if notice %>
+  <p style="color: green"><%= notice %></p>
+<%end%>
 
-<%= render @report %>
-
-<div>
-  <%= link_to "Edit this report", edit_report_path(@report) %> |
-  <%= link_to "Back to reports", reports_path %>
-
-  <%= button_to "Destroy this report", @report, method: :delete %>
+<div style="display: flex; justify-content: center; align-items: center; min-height: 80vh; ">
+  <div style="padding: 20px; width: 50%; text-align: left;  background-color:black; color:white; border-radius:5px;">
+  <%= render @report %>
+    <div>
+      <%= link_to "Edit this report", edit_report_path(@report), class:"btn btn-primary" %>
+      <%= link_to "Back to reports", reports_path, class:"btn btn-primary" %>
+      <%= link_to "X", @report, method: :delete, class:"btn btn-danger" %>
+    </div>
+  </div>
 </div>

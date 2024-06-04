@@ -1,5 +1,5 @@
 class LocationsController < ApplicationController
-  before_action :set_location, only: %i[ show edit update destroy ]
+  before_action :set_location, only: %i[ show edit update destroy]
 
   # GET /locations or /locations.json
   def index
@@ -59,23 +59,6 @@ class LocationsController < ApplicationController
       format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }
       format.json { head :no_content }
     end
-  end
-
-  def reverse_geocode_all
-    Location.all.each do |location|
-      lat_lng = "#{location.ltd},#{location.lng}"
-      api_key = 'AIzaSyARTCBV8pAR9OwEGjutqbosWJxN5xolCik'
-      url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=#{lat_lng}&key=#{api_key}"
-      response = HTTParty.get(url)
-      if response.code == 200
-          data = JSON.parse(response.body)
-          location.update!(address: data['results'][0]['formatted_address'])
-      else
-        location.update!(address: "Unknown")
-      end
-
-    end
-    redirect_to locations_url
   end
 
   private

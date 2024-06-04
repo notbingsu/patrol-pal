@@ -1,3 +1,6 @@
+<%if notice %>
+  <p><%= notice %></p>
+<%end%>
 <h1 style="color:white; font-size:80px; font-family: 'Blinker', sans-serif;">Reports</h1>
 <table class="table table-striped table-dark">
   <thead>
@@ -12,7 +15,7 @@
     <% @reports.each do |report| %>
       <tr>
         <th scope="row">#</th>
-        <td><%= button_to report.title, report, class:"btn btn-primary"%></td>
+        <td><%= button_to report.title, report_path(report), method: :get, class:"btn btn-primary"%></td>
         <td><%= report.time %></td>
         <td><%= link_to "X", report , data:{ turbo_method:"delete", turbo_confirm:"Confirm delete?" }, class:"btn btn-danger"%></td>
       </tr>
@@ -20,16 +23,5 @@
   </tbody>
 </table>
 
-<%= button_to "New report", new_report_path, class:"btn btn-secondary" %>
-<%= button_to "Generate hotspots", reverse_geocode_all_path, method: :post, class: "btn btn-primary" %>
+<%= button_to "New report", new_report_path, method: :get, class:"btn btn-secondary" %>
 <%= button_to "Submit reports", submit_reports_path, method: :post, class: "btn btn-primary" %>
-<% if @result.present? %>
-  <h2>Result:</h2>
-  <ul>
-    <% @result.each do |key, value| %>
-      <li style="color:white;"><strong><%= key %>:</strong> <%= value %></li>
-    <% end %>
-  </ul>
-<% else %>
-  <p style="color:white;">No result available.</p>
-<% end %>

@@ -11,28 +11,58 @@
     </div>
   <% end %>
 
+<div  style="width: 40%;">
   <div>
-    <%= form.text_field :title, placeholder:"TITLE"%>
+    <%= form.text_field :title, placeholder:"TITLE", style:"width:100%;"%>
   </div>
 
   <div>
-    <%= form.text_area :body, placeholder:"DESCRIPTION" %>
+    <%= form.text_area :body, placeholder:"DESCRIPTION", style:"width:100%;" %>
   </div>
 
   <div>
-    <%= form.text_field :lat, placeholder:"LAT" %>
+    <%= form.text_field :lat, placeholder:"LAT", style:"width:100%;" %>
   </div>
 
   <div>
-    <%= form.text_field :lng, placeholder:"LNG" %>
+    <%= form.text_field :lng, placeholder:"LNG", style:"width:100%;" %>
   </div>
-
+  <button type="button" class="btn btn-dark" onclick="getLocation()" style="text-align:left;width:100%;">Use current location</button>
   <div>
     <%= form.label :time, style: "display: block; color: white;" %>
-    <%= form.datetime_field :time %>
+    <%= form.datetime_field :time, style:"width:100%;" %>
   </div>
 
   <div>
-    <%= form.submit %>
+    <%= form.submit class:"btn btn-light"%>
   </div>
+</div>
 <% end %>
+
+<script>
+  var selected = false;
+  function getLocation() {
+    if (!selected){
+      selected = true;
+      //change button
+      if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        document.querySelector('input[name="report[lat]"]').value = position.coords.latitude;
+        document.querySelector('input[name="report[lng]"]').value = position.coords.longitude;
+      }, function(error) {
+        alert("Error retrieving location: " + error.message);
+      });
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }else{
+      selected = false;
+      document.querySelector('input[name="report[lat]"]').value = "";
+      document.querySelector('input[name="report[lng]"]').value = "";
+    }
+  }
+  function inputPosition(position){
+    lat = position.coords.latitude;
+    lng = position.coords.longitude;
+  }
+</script>

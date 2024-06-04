@@ -4,7 +4,10 @@ class PolylinesController < ApplicationController
   # GET /polylines or /polylines.json
   def index
     @polylines = Polyline.all
-    render json: @polylines
+    respond_to do |format|
+      format.html # Render HTML normally
+      format.json { render json: @polylines } # Respond with JSON data
+    end
   end
 
   # GET /polylines/1 or /polylines/1.json
